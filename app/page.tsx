@@ -124,6 +124,35 @@ export default function Page() {
         </div>
       )}
 
+      {step <= 4 && (
+        <div className="mb-6 flex justify-between">
+          <button
+            onClick={() => setStep((s) => Math.max(1, (s - 1)) as Step)}
+            disabled={step === 1 || loading}
+            className="px-4 py-2 rounded-lg border border-slate-300 disabled:opacity-40"
+          >
+            ← Back
+          </button>
+          {step < 4 ? (
+            <button
+              onClick={() => setStep((s) => Math.min(4, (s + 1)) as Step)}
+              disabled={!canNext}
+              className="px-4 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40"
+            >
+              Next →
+            </button>
+          ) : (
+            <button
+              onClick={generate}
+              disabled={!canNext || loading}
+              className="px-4 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-40"
+            >
+              {loading ? "Generating…" : "Generate"}
+            </button>
+          )}
+        </div>
+      )}
+
       {step === 1 && (
         <section className="space-y-4">
           <h2 className="text-xl font-semibold">Topic or Focus</h2>
@@ -243,11 +272,17 @@ export default function Page() {
                   onClick={() => setAspectId(a.id)}
                   className={`border rounded-lg overflow-hidden text-left bg-white transition hover:border-slate-900 ${aspectId === a.id ? "border-slate-900 ring-2 ring-slate-900" : "border-slate-300"}`}
                 >
-                  <div className="w-full h-28 bg-slate-50 flex items-center justify-center p-3">
-                    <div
-                      className="bg-slate-300 border border-slate-400 rounded-sm shadow-sm"
-                      style={{ aspectRatio: `${w} / ${h}`, maxWidth: "100%", maxHeight: "100%", width: w >= h ? "100%" : "auto", height: h > w ? "100%" : "auto" }}
-                    />
+                  <div className="w-full bg-slate-50 flex items-center justify-center p-4">
+                    <div className="w-28 h-28 flex items-center justify-center">
+                      <div
+                        className="bg-slate-300 border border-slate-400 rounded-sm shadow-sm"
+                        style={
+                          w >= h
+                            ? { width: "100%", height: `${(h / w) * 100}%` }
+                            : { width: `${(w / h) * 100}%`, height: "100%" }
+                        }
+                      />
+                    </div>
                   </div>
                   <div className="p-3">
                     <div className="font-medium">{a.label}</div>
